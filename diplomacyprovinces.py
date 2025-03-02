@@ -266,6 +266,7 @@ class power:
         self.units=[]
         self.centres=0
         self.home=[]
+        self.bot = False
 
 f="fleet"
 a="army"
@@ -290,6 +291,10 @@ austria.units=[unit(f,trieste),unit(a,vienna),unit(a,budapest)]
 #turkey.units=[unit(f,ankara),unit(a,constantinople),unit(a,smyrna)]
 
 for p in powers:
+    print(p.name)
+    select = input()
+    if select == "bot":
+        p.bot = True
     for u in p.units:
         u.prov.occupied=True
         u.prov.control=p
@@ -311,6 +316,12 @@ def move(power,prov1,prov2):
 
 phase = 0
 
+def prov_interpret(mv):
+    for p in provs:
+        if p.name==mv:
+            return p
+    return london
+
 def turn():
     global phase
     phase+=1
@@ -320,11 +331,17 @@ def turn():
         dupes[p]=0
     #print(dupes)
     for p in powers:
+        print("Orders for",p.name)
         for u in p.units:
-            moves.append((u,u.plan()))
+            if p.bot:
+                moves.append((u,u.plan()))
+            else:
+                print("Enter move for", u.prov.name)
+                mv = input()
+                moves.append((u,prov_interpret(mv)))
             #print(moves[-1][0].prov.name,moves[-1][1].name)
             dupes[moves[-1][1]]+=1
-
+        
     #print(dupes)
 
     valid_moves=[]
